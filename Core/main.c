@@ -26,13 +26,18 @@ void read_input(InputBuffer *input_buffer){
 		exit(EXIT_FAILURE);
 	}
 	
-	input_buffer->input_lenght = byte_read -1;
+	input_buffer->input_len = byte_read -1;
 	input_buffer->buffer[byte_read-1] = 0;
+}
+
+void close_buffer(InputBuffer *input_buffer){
+	free(input_buffer->buffer);
+	free(input_buffer->buffer);
 }
 
 int main(int argc,char* argv[]){
 	InputBuffer* input_buffer = new_input_buffer();
-	while(True){
+	while(true){
 		print_prompt();
 		read_input(input_buffer);
 		if (strcmp(input_buffer->buffer,".exit") == 0){
