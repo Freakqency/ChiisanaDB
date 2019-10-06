@@ -1,51 +1,30 @@
 #include "declarations.h"
-
-typedef struct{
-	char *buffer;
-	size_t buffer_len;
-	ssize_t input_len;
-} InputBuffer;
-
-InputBuffer *new_input_buffer(){
-	InputBuffer *input_buffer = malloc(sizeof(InputBuffer));
-	input_buffer->buffer = NULL;
-	input_buffer->buffer_len = 0;
-	input_buffer->input_len = 0;
-	return input_buffer;
-}
-
-void print_prompt(){
-	printf("db > ");
-}
-
-void read_input(InputBuffer *input_buffer){
-	ssize_t byte_read = getline(&(input_buffer->buffer),&(input_buffer->buffer_len),stdin);
-	
-	if (byte_read <=0){
-		printf("Error in Input");
-		exit(EXIT_FAILURE);
-	}
-	
-	input_buffer->input_len = byte_read -1;
-	input_buffer->buffer[byte_read-1] = 0;
-}
-
-void close_buffer(InputBuffer *input_buffer){
-	free(input_buffer->buffer);
-	free(input_buffer->buffer);
-}
+#include "utility.h"
 
 int main(int argc,char* argv[]){
 	InputBuffer* input_buffer = new_input_buffer();
 	while(true){
 		print_prompt();
 		read_input(input_buffer);
-		if (strcmp(input_buffer->buffer,".exit") == 0){
-			close_buffer(input_buffer);
-			exit(EXIT_SUCCESS);
+		if (input_buffer->buffer[0] == '.' ){
+			switch(do_meta_command(input_buffer)){
+				case(META_COMMAND_SUCCESS):
+					continue;
+				case(META_COMMAND_FAILURE):
+					continue;
+			}
 		}
-		else{
-			printf("Command not Recognized %s \n",input_buffer->buffer);
-		}		
+		
+		Statement statement;
+		switch (prepare_statement(input_buffer, &statement)){
+			case(PREPARE_SUCCESS):
+				break;
+			case(PREPARE_FAILURE):
+				printf("Command unrecognized %s \n", input_buffer->buffer);
+				continue;
+		}
+		
+		execute_statement(&statement);
+		printf("Query Success! \n");
 	}
 }
