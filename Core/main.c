@@ -1,4 +1,3 @@
-#include "declarations.h"
 #include "utility.h"
 
 int main(int argc,char* argv[]){
@@ -33,7 +32,7 @@ int main(int argc,char* argv[]){
 				printf("Query executed successfully \n");
 				break;
 			case (EXECUTE_TABLE_FULL):
-				printf("Error : table full \n")
+				printf("Error : table full \n");
 				break;
 		}
 	}
